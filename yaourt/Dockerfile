@@ -10,7 +10,7 @@ RUN groupadd -r yaourt && \
 RUN pacman -S --noconfirm sudo base-devel
 
 # add root access
-RUN echo "yaourt        ALL=(ALL) ALL" > /etc/sudoers.d/yaourt
+RUN echo "yaourt        ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/yaourt
 
 # create .gnupg folder
 RUN dirmngr
@@ -20,6 +20,7 @@ RUN dirmngr
 RUN pacman-key --init && \
     pacman-key --populate archlinux && \
     pacman-key --refresh-keys
+
 
 RUN echo -e "[archlinuxfr] \n SigLevel = Never \n Server = http://repo.archlinux.fr/\$arch" >> /etc/pacman.conf && \
 	pacman -Syy --noconfirm yaourt && \
