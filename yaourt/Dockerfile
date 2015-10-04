@@ -11,6 +11,9 @@ RUN pacman-key --init && \
 # install sudo package
 RUN pacman -S --noconfirm sudo
 
+# add root access
+RUN echo "yaourt	ALL=(ALL) ALL" > /etc/sudoers.d/yaourt
+
 RUN echo -e "[archlinuxfr] \n SigLevel = Never \n Server = http://repo.archlinux.fr/\$arch" >> /etc/pacman.conf && \
 	pacman -Syy --noconfirm yaourt && \
 	pacman -Scc --noconfirm
