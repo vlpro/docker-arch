@@ -1,5 +1,8 @@
 FROM dock0/arch
 
+# create .gnupg folder
+RUN dirmngr
+
 # update pacman keys
 RUN pacman-key --init && \
     pacman-key --populate archlinux && \
