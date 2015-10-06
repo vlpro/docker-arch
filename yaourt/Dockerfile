@@ -1,27 +1,39 @@
 FROM dock0/arch
 
-# add yaourt user and group
-RUN groupadd -r yaourt && \
-    useradd -r -g yaourt yaourt && \
-    mkdir /home/yaourt && \
-    chown -R yaourt /home/yaourt
+# synchronizing package list
+RUN pacman --noconfirm -Sy
 
-# install sudo package
-RUN pacman -S --noconfirm sudo base-devel
+# install base-devel and yajl
+RUN pacman --noconfirm -S base-devel
+RUN pacman --noconfirm -S yajl
 
-# add root access
-RUN echo "yaourt        ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/yaourt
+# create yaourt user and group
+RUN groupadd -r yaourt
+RUN useradd -r -g yaourt yaourt
 
-# create .gnupg folder
-RUN dirmngr
+RUN mkdir /tmp/yaourt
+RUN chown -R yaourt:yaourt /tmp/yaourt && \
+    chmod -R 771 /tmp/yaourt
+USER yaourt 
+WORKDIR /tmp/yaourt
 
+# cloning and install yaourt dependency (package-query)
+RUN git clone https://aur.archlinux.org/package-query.git 
+WORKDIR /tmp/yaourt/package-query
+RUN makepkg --noconfirm
+USER root
+WORKDIR /tmp/yaourt/package-query
+RUN pacman --noconfirm -U *.tar.xz
 
-# update pacman keys
-RUN pacman-key --init && \
-    pacman-key --populate archlinux && \
-    pacman-key --refresh-keys
+# cloning and install yaourt
+USER yaourt 
+WORKDIR /tmp/yaourt
+RUN git clone https://aur.archlinux.org/yaourt.git
+WORKDIR /tmp/yaourt/yaourt
+RUN makepkg --noconfirm
+USER root 
+WORKDIR /tmp/yaourt/yaourt
+RUN pacman --noconfirm -U *.tar.xz
 
-
-RUN echo -e "[archlinuxfr] \n SigLevel = Never \n Server = http://repo.archlinux.fr/\$arch" >> /etc/pacman.conf && \
-    pacman -Syy --noconfirm yaourt && \
-    pacman -Scc --noconfirm
+# remove user yaourt (for security reasons)
+RUN userdel -r yaourt
