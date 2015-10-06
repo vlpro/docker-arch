@@ -2,7 +2,7 @@ FROM vlpro/arch-yaourt
 
 ENV ORIENTDB_ROOT_PASSWORD root
 
-# create user yaourt
+# create user and group
 RUN groupadd -r yaourt
 RUN useradd -r -g yaourt yaourt
 
