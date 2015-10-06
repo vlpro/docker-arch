@@ -4,7 +4,8 @@ https://github.com/vlpro/docker-arch/tree/master/yaourt
 ```Dockerfile
 FROM vlpro/arch-yaourt
 
-# create user yaourt
+# create user and group
+RUN groupadd -r yaourt
 RUN useradd -r -g yaourt yaourt
 
 # add root access
