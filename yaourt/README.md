@@ -1,7 +1,7 @@
 https://github.com/vlpro/docker-arch/tree/master/yaourt
 
 # Usage:
-```Docker
+```Dockerfile
 FROM vlpro/arch-yaourt
 
 # create user yaourt
